@@ -4,7 +4,7 @@
 #http://flask-appbuilder.readthedocs.io/en/latest/installation.html
 
 #Generating HTML from within Python is not fun, and actually pretty cumbersome because you have to do the
-#HTML escaping on your own to keep the application secure. Because of that Flask configures the Jinja2 template engine 
+#HTML escaping on your own to keep the application secure. Because of that Flask configures the Jinja2 template engine
 #for you automatically.
 #requests are objects that flask handles (get set post, etc)
 from flask import Flask, render_template,request
@@ -18,12 +18,12 @@ import keras.models
 import re
 
 #system level operations (like loading files)
-import sys 
+import sys
 #for reading operating system data
 import os
 #tell our app where our saved model is
 sys.path.append(os.path.abspath("./model"))
-from load import * 
+from load import *
 #initalize our flask app
 app = Flask(__name__)
 #global vars for easy reusability
@@ -37,7 +37,7 @@ def convertImage(imgData1):
 	#print(imgstr)
 	with open('output.png','wb') as output:
 		output.write(imgstr.decode('base64'))
-	
+
 
 @app.route('/')
 def index():
@@ -54,7 +54,6 @@ def predict():
 	imgData = request.get_data()
 	#encode it into a suitable format
 	convertImage(imgData)
-	print "debug"
 	#read the image into memory
 	x = imread('output.png',mode='L')
 	#compute a bit-wise inversion so black becomes white and vice versa
@@ -64,18 +63,16 @@ def predict():
 	#imshow(x)
 	#convert to a 4D tensor to feed into our model
 	x = x.reshape(1,28,28,1)
-	print "debug2"
 	#in our computation graph
 	with graph.as_default():
 		#perform the prediction
 		out = model.predict(x)
 		print(out)
 		print(np.argmax(out,axis=1))
-		print "debug3"
 		#convert the response to a string
 		response = np.array_str(np.argmax(out,axis=1))
-		return response	
-	
+		return response
+
 
 if __name__ == "__main__":
 	#decide what port to run the app in
